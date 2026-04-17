@@ -67,3 +67,15 @@ void Servo_SetAngle(u8 angle)
     pulse = PWM_MIN + (PWM_MAX - PWM_MIN) * angle / 180;
     TIM_SetCompare1(TIM2, pulse);
 }
+
+void lock(uint8_t enable)
+{
+    if (enable)
+    {
+        TIM_SetCompare1(TIM2, PWM_MIN);  // 上锁位置（0度附近）
+    }
+    else
+    {
+        TIM_SetCompare1(TIM2, 1500);     // 解锁位置（90度附近）
+    }
+}

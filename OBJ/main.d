@@ -39,3 +39,5 @@
 ..\obj\main.o: ..\HARDWARE\LCD\lcd.h
 ..\obj\main.o: ..\HARDWARE\LCD\pic.h
 ..\obj\main.o: ..\HARDWARE\PWM\pwm.h
+..\obj\main.o: ..\HARDWARE\KEY\key.h
+..\obj\main.o: stm32f4xx_it.h

@@ -10,5 +10,6 @@
 void TIM2_PWM_Init(void);   // 初始化TIM2以生成PWM信号
 void GPIO_Init_PWM(void);   // 初始化GPIO以输出PWM信号
 void Servo_SetAngle(u8 angle);  // 设置舵机角度（0-180度）
+void lock(uint8_t enable);      // 门锁控制：1-上锁，0-解锁
 
 #endif
