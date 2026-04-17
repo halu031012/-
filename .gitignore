@@ -1,0 +1,78 @@
+# Keil/MDK-ARM project
+*.uvguix.*
+*.bak
+*.ddk
+*.edk
+*.lst
+*.lnp
+*.mpf
+*.mpj
+*.obj
+*.omf
+*.plg
+*.rpt
+*.tmp
+*.__i
+*._ia
+*.crf
+*.d
+*.axf
+*.tra
+*.htm
+*.sct
+*.build_log.htm
+
+# Debug files
+*.ini
+JLinkLog.txt
+*.JLink
+
+# Object files
+*.o
+*.obj
+*.elf
+*.hex
+*.bin
+*.map
+
+# Listing files
+*.lst
+*.m51
+*.map
+
+# Preprocessor output
+*.i
+*.pre
+
+# Libraries
+*.lib
+*.a
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Backup files
+*~
+*.bak
+*.old
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Build directories
+OBJ/
+Listings/
+Objects/
+RTE/
+
+# Debug directory
+Debug/
+DebugConfig/
