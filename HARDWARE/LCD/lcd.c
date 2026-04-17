@@ -378,19 +378,33 @@ void Draw_Circle(u16 x0, u16 y0, u8 r, u16 color)
     }
 }
 
+void lcd_disp_chinese(u16 x,u16 y,u8* s,u16 fc,u16 bc,u8 sizey,u8 mode)
+{
+    while(*s)
+    {
+        LCD_ShowChinese(x,y,s,fc,bc,sizey,mode);
+        x+=16;
+        if(x>=127)
+        {
+            x=0;
+            y+=16;
+        }
+        s+=2;
+    }
+}
+
+
+
 // 显示汉字串
 void LCD_ShowChinese(u16 x, u16 y, u8 *s, u16 fc, u16 bc, u8 sizey, u8 mode)
 {
-    while (*s != 0)
-    {
-        if (sizey == 16) LCD_ShowChinese16x16(x, y, s, fc, bc, sizey, mode);
-        else if (sizey == 24) LCD_ShowChinese24x24(x, y, s, fc, bc, sizey, mode);
-        else if (sizey == 32) LCD_ShowChinese32x32(x, y, s, fc, bc, sizey, mode);
-        else return;
-        s += 2;
-        x += sizey;
-    }
+    if (*s == 0) return;
+    if (sizey == 16) LCD_ShowChinese16x16(x, y, s, fc, bc, sizey, mode);
+    else if (sizey == 24) LCD_ShowChinese24x24(x, y, s, fc, bc, sizey, mode);
+    else if (sizey == 32) LCD_ShowChinese32x32(x, y, s, fc, bc, sizey, mode);
 }
+
+
 
 // 显示单个16x16汉字
 void LCD_ShowChinese16x16(u16 x, u16 y, u8 *s, u16 fc, u16 bc, u8 sizey, u8 mode)
@@ -429,93 +443,21 @@ void LCD_ShowChinese16x16(u16 x, u16 y, u8 *s, u16 fc, u16 bc, u8 sizey, u8 mode
                     }
                 }
             }
+            break;  // 找到并显示后退出循环
         }
-        continue;
     }
 }
 
 // 显示单个24x24汉字
 void LCD_ShowChinese24x24(u16 x, u16 y, u8 *s, u16 fc, u16 bc, u8 sizey, u8 mode)
 {
-    u8 i, j;
-    u16 k;
-    u16 HZnum;
-    u16 TypefaceNum;
-    u16 x0 = x;
-    TypefaceNum = sizey / 8 * sizey;
-    HZnum = sizeof(tfont24) / sizeof(typFNT_GB24);
-    for (k = 0; k < HZnum; k++)
-    {
-        if ((tfont24[k].Index[0] == *(s)) && (tfont24[k].Index[1] == *(s + 1)))
-        {
-            LCD_Address_Set(x, y, x + sizey - 1, y + sizey - 1);
-            for (i = 0; i < TypefaceNum; i++)
-            {
-                for (j = 0; j < 8; j++)
-                {
-                    if (!mode)
-                    {
-                        if (tfont24[k].Msk[i] & (0x01 << j)) LCD_WR_DATA(fc);
-                        else LCD_WR_DATA(bc);
-                    }
-                    else
-                    {
-                        if (tfont24[k].Msk[i] & (0x01 << j)) LCD_DrawPoint(x, y, fc);
-                        x++;
-                        if ((x - x0) == sizey)
-                        {
-                            x = x0;
-                            y++;
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        continue;
-    }
+    // 24x24字库未定义，暂不支持
 }
 
 // 显示单个32x32汉字
 void LCD_ShowChinese32x32(u16 x, u16 y, u8 *s, u16 fc, u16 bc, u8 sizey, u8 mode)
 {
-    u8 i, j;
-    u16 k;
-    u16 HZnum;
-    u16 TypefaceNum;
-    u16 x0 = x;
-    TypefaceNum = sizey / 8 * sizey;
-    HZnum = sizeof(tfont32) / sizeof(typFNT_GB32);
-    for (k = 0; k < HZnum; k++)
-    {
-        if ((tfont32[k].Index[0] == *(s)) && (tfont32[k].Index[1] == *(s + 1)))
-        {
-            LCD_Address_Set(x, y, x + sizey - 1, y + sizey - 1);
-            for (i = 0; i < TypefaceNum; i++)
-            {
-                for (j = 0; j < 8; j++)
-                {
-                    if (!mode)
-                    {
-                        if (tfont32[k].Msk[i] & (0x01 << j)) LCD_WR_DATA(fc);
-                        else LCD_WR_DATA(bc);
-                    }
-                    else
-                    {
-                        if (tfont32[k].Msk[i] & (0x01 << j)) LCD_DrawPoint(x, y, fc);
-                        x++;
-                        if ((x - x0) == sizey)
-                        {
-                            x = x0;
-                            y++;
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        continue;
-    }
+    // 32x32字库未定义，暂不支持
 }
 
 // 显示单个字符

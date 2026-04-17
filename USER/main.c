@@ -5,15 +5,15 @@
 #include "timer.h"
 #include "key.h"
 
+
 /*函数声明*/
 u8 String_Check(u8* string1, u8* string2, u8 len);
 
 /*变量声明*/
 u8 num;
 u8 key_val, key_old, key_down, key_up;
-u8 password[6] = {1, 2, 3, 4, 5, 6};      // 正确密码
-u8 password_cmd[6] = {2, 7, 7, 5, 1, 6};  // 备用密码
-u8 key_temp[7] = {0};                      // 临时存储输入的密码
+u8 password[6] = {1, 2, 3, 4, 5, 6};      // 正确密码 123456
+u8 key_temp[6] = {0};                      // 临时存储输入的密码（最多6位）
 u8 key_index;
 u8 key_index_old;
 
@@ -28,66 +28,58 @@ void KEY_Proc(void)
     switch(key_down)
     {
         case 1:  // 数字1
-            key_temp[key_index] = 1;
-            key_index++;
+            if(key_index < 6) { key_temp[key_index] = 1; key_index++; }
             break;
         case 2:  // 数字2
-            key_temp[key_index] = 2;
-            key_index++;
+            if(key_index < 6) { key_temp[key_index] = 2; key_index++; }
             break;
         case 3:  // 数字3
-            key_temp[key_index] = 3;
-            key_index++;
+            if(key_index < 6) { key_temp[key_index] = 3; key_index++; }
             break;
         case 4:
             break;
         case 5:  // 数字4
-            key_temp[key_index] = 4;
-            key_index++;
+            if(key_index < 6) { key_temp[key_index] = 4; key_index++; }
             break;
         case 6:  // 数字5
-            key_temp[key_index] = 5;
-            key_index++;
+            if(key_index < 6) { key_temp[key_index] = 5; key_index++; }
             break;
         case 7:  // 数字6
-            key_temp[key_index] = 6;
-            key_index++;
+            if(key_index < 6) { key_temp[key_index] = 6; key_index++; }
             break;
         case 8:
             break;
         case 9:  // 数字7
-            key_temp[key_index] = 7;
-            key_index++;
+            if(key_index < 6) { key_temp[key_index] = 7; key_index++; }
             break;
         case 10: // 数字8
-            key_temp[key_index] = 8;
-            key_index++;
+            if(key_index < 6) { key_temp[key_index] = 8; key_index++; }
             break;
         case 11: // 数字9
-            key_temp[key_index] = 9;
-            key_index++;
+            if(key_index < 6) { key_temp[key_index] = 9; key_index++; }
             break;
         case 12:
             break;
         case 13: // 清除键
             key_index = 0;
+            key_temp[0] = key_temp[1] = key_temp[2] = key_temp[3] = key_temp[4] = key_temp[5] = 0;
             break;
         case 14: // 数字0
-            key_temp[key_index] = 0;
-            key_index++;
+            if(key_index < 6) { key_temp[key_index] = 0; key_index++; }
             break;
         case 15:
             break;
         case 16: // 确认键
-            if(String_Check(key_temp, password, 6))
+            if(key_index == 6 && String_Check(key_temp, password, 6))
                 Lock(0);  // 密码正确，开锁
             else
-                Lock(1);  // 密码错误，保持上锁
+                Lock(1);  // 密码错误或长度不足，保持上锁
+            key_index = 0;
+            key_temp[0] = key_temp[1] = key_temp[2] = key_temp[3] = key_temp[4] = key_temp[5] = 0;
             break;
     }
 
-    // 防止数组越界
-    if(key_index > 6) key_index = 6;
+
 }
 
 /*屏幕处理函数 - 每100ms执行一次*/
@@ -180,7 +172,9 @@ int main(void)
     LCD_Fill(0, 0, 127, 127, WHITE);
     
     // 开机显示
-    LCD_ShowString(32, 50, "Starting", RED, WHITE, 16, 0);
+    //LCD_ShowString(32, 50, "Starting", RED, WHITE, 16, 0);
+	//lcd_disp_chinese(32,50,"正在启动",RED,WHITE,16,0);
+	lcd_disp_chinese(32,50,"\xD5\xFD\xD4\xDA\xC6\xF4\xB6\xAF",RED,WHITE,16,0);
     
     // 循环划线实现进度条的效果
     while(i < 128)
@@ -191,17 +185,17 @@ int main(void)
     }
     
     // 启动成功
-    LCD_ShowString(24, 50, "Success!", RED, WHITE, 16, 0);
+    lcd_disp_chinese(32, 50, "\xC6\xF4\xB6\xAF\xB3\xC9\xB9\xA6", RED, WHITE, 16, 0);
     delay_ms(500);
     
     // 显示logo和主页
-    LCD_ShowPicture(0, 0, 128, 128, gImage_1);
-    delay_ms(1000);
+//    LCD_ShowPicture(0, 0, 128, 128, gImage_1);
+//    delay_ms(1000);
     LCD_ShowPicture(0, 0, 128, 128, gImage_2);
     
     // 显示密码输入提示
-    LCD_ShowString(0, 0, "LOCKED", RED, WHITE, 16, 0);
-    LCD_ShowString(0, 16, "Input PIN:", RED, WHITE, 16, 0);
+    lcd_disp_chinese(0, 0, "\xD2\xD1\xCB\xF8\xB6\xA8", RED, WHITE, 16, 0);
+    lcd_disp_chinese(0, 16, "\xC7\xEB\xCA\xE4\xC8\xEB\xC3\xDC\xC2\xEB", RED, WHITE, 16, 0);
     
     // 填充密码输入区域背景
     LCD_Fill(16, 45, 112, 66, YELLOW);
@@ -221,3 +215,7 @@ int main(void)
         Scheduler_Run();
     }
 }
+
+
+
+
