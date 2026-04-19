@@ -71,6 +71,7 @@ void Draw_Circle(u16 x0, u16 y0, u8 r, u16 color);  // 画圆
 
 void LCD_ShowChinese(u16 x, u16 y, u8 *s, u16 fc, u16 bc, u8 sizey, u8 mode);  // 显示汉字串
 void lcd_disp_chinese(u16 x,u16 y,u8* s,u16 fc,u16 bc,u8 sizey,u8 mode);
+void lcd_show_chinese(u16 x,u16 y,u8* s,u16 fc,u16 bc,u8 sizey,u8 mode);  // 字符串形式汉字显示
 void LCD_ShowChinese16x16(u16 x, u16 y, u8 *s, u16 fc, u16 bc, u8 sizey, u8 mode);
 void LCD_ShowChinese24x24(u16 x, u16 y, u8 *s, u16 fc, u16 bc, u8 sizey, u8 mode);
 void LCD_ShowChinese32x32(u16 x, u16 y, u8 *s, u16 fc, u16 bc, u8 sizey, u8 mode);

@@ -393,6 +393,12 @@ void lcd_disp_chinese(u16 x,u16 y,u8* s,u16 fc,u16 bc,u8 sizey,u8 mode)
     }
 }
 
+// 字符串形式汉字显示（兼容第四讲代码）
+void lcd_show_chinese(u16 x,u16 y,u8* s,u16 fc,u16 bc,u8 sizey,u8 mode)
+{
+    lcd_disp_chinese(x,y,s,fc,bc,sizey,mode);
+}
+
 
 
 // 显示汉字串
@@ -427,12 +433,12 @@ void LCD_ShowChinese16x16(u16 x, u16 y, u8 *s, u16 fc, u16 bc, u8 sizey, u8 mode
                 {
                     if (!mode)
                     {
-                        if (tfont16[k].Msk[i] & (0x01 << j)) LCD_WR_DATA(fc);
+                        if (tfont16[k].Msk[i] & (0x01 << j)) LCD_WR_DATA(fc);  // 低位在前
                         else LCD_WR_DATA(bc);
                     }
                     else
                     {
-                        if (tfont16[k].Msk[i] & (0x01 << j)) LCD_DrawPoint(x, y, fc);
+                        if (tfont16[k].Msk[i] & (0x01 << j)) LCD_DrawPoint(x, y, fc);  // 低位在前
                         x++;
                         if ((x - x0) == sizey)
                         {
@@ -479,12 +485,12 @@ void LCD_ShowChar(u16 x, u16 y, u8 num, u16 fc, u16 bc, u8 sizey, u8 mode)
         {
             if (!mode)
             {
-                if (temp & (0x01 << t)) LCD_WR_DATA(fc);
+                if (temp & (0x80 >> t)) LCD_WR_DATA(fc);  // 高位在前（适配ASCII字模）
                 else LCD_WR_DATA(bc);
             }
             else
             {
-                if (temp & (0x01 << t)) LCD_DrawPoint(x, y, fc);
+                if (temp & (0x80 >> t)) LCD_DrawPoint(x, y, fc);  // 高位在前（适配ASCII字模）
                 x++;
                 if ((x - x0) == sizex)
                 {

@@ -40,3 +40,6 @@
 ..\obj\main.o: ..\HARDWARE\LCD\pic.h
 ..\obj\main.o: ..\HARDWARE\TIMER\timer.h
 ..\obj\main.o: ..\HARDWARE\KEY\key.h
+..\obj\main.o: ..\HARDWARE\UART\uart.h
+..\obj\main.o: ..\HARDWARE\AUDIO\audio.h
+..\obj\main.o: D:\keil5\ARM\ARMCC\Bin\..\include\string.h
