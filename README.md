@@ -8,7 +8,7 @@
 - ✅ **PWM舵机控制** - 舵机角度控制，实现门锁开关
 - ✅ **4×4矩阵键盘** - 输入数字密码（0-9）及功能键
 - ✅ **密码验证** - 6位密码开锁，支持修改密码
-- ✅ **RFID刷卡** - RC522模块支持刷卡开锁
+- ✅ **RFID刷卡** - UART串口RFID模块，支持刷卡开锁
 - ✅ **语音播报** - SYN6288语音模块播报提示音
 - ✅ **管理员模式** - 管理员密码验证后可录入卡片、修改密码
 - ✅ **安全机制** - 密码错误3次锁定30秒
@@ -22,7 +22,7 @@
 - **LCD**: ST7735 (128x128)
 - **舵机**: 标准PWM舵机
 - **语音模块**: SYN6288（USART3通信）
-- **RFID模块**: RC522（SPI2通信）
+- **RFID模块**: UART串口RFID读卡器（USART2通信）
 - **键盘**: 4×4矩阵键盘
 
 ## 引脚配置
@@ -91,15 +91,12 @@
 | VCC | 5V | 语音模块供电 |
 | GND | GND | 共地 |
 
-### RFID模块（SPI2）
+### RFID模块（USART2）
 | 功能 | 引脚 | 说明 |
 |------|------|------|
-| SCK | PB13 | SPI2时钟 |
-| MISO | PB14 | SPI2数据输入 |
-| MOSI | PB15 | SPI2数据输出 |
-| SDA | PB12 | 片选信号 |
-| RST | PB11 | 复位信号 |
-| VCC | 3.3V | 供电 |
+| USART2_TX | PD5 | 连接RFID模块RX |
+| USART2_RX | PD6 | 连接RFID模块TX |
+| VCC | 3.3V-5V | 供电 |
 | GND | GND | 共地 |
 
 ## 目录结构
@@ -114,24 +111,21 @@ STM32F407智能门锁/
 │   │   ├── lcd.h
 │   │   ├── font_ascii_16x8.h
 │   │   └── pic.h
-│   ├── PWM/              # PWM舵机驱动
-│   │   ├── pwm.c
-│   │   └── pwm.h
 │   ├── KEY/              # 矩阵键盘驱动
 │   │   ├── key.c
 │   │   └── key.h
-│   ├── TIMER/            # 定时器驱动
+│   ├── TIMER/            # 定时器与PWM驱动
 │   │   ├── timer.c
 │   │   └── timer.h
 │   ├── AUDIO/            # 语音模块驱动
 │   │   ├── audio.c
 │   │   └── audio.h
-│   └── RFID/             # RFID模块驱动
-│       ├── rc522.c
-│       └── rc522.h
+│   └── UART/             # 串口通信驱动（RFID & 调试）
+│       ├── uart.c
+│       └── uart.h
 ├── SYSTEM/                # 系统文件
 │   ├── delay/            # 延时函数
-│   ├── usart/            # 串口
+│   ├── usart/            # 调试串口
 │   └── sys/              # 系统配置
 └── USER/                  # 用户代码
     └── main.c            # 主程序
@@ -180,13 +174,10 @@ VCC → 5V
 GND → GND
 
 【RFID模块】
-SCK  → PB13
-MISO → PB14
-MOSI → PB15
-SDA  → PB12
-RST  → PB11
-VCC  → 3.3V
-GND  → GND
+TX  → PD5 (USART2_TX)
+RX  → PD6 (USART2_RX)
+VCC → 3.3V-5V
+GND → GND
 ```
 
 ### 操作流程
