@@ -25,7 +25,7 @@
 u8 String_Check(u8* string1, u8* string2, u8 len);  // 数组比较函数
 void String_Copy(u8* string1, u8* string2, u8 len);  // 数组复制函数
 void Key_Clear(void);                                // 清空按键缓冲区
-// u8 RFID_Check(void);                              // RFID卡片校验（暂注释）
+u8 RFID_Check(void);                                 // RFID卡片校验
 
 /* 任务处理函数 */
 void KEY_Proc(void);    // 按键处理
@@ -33,7 +33,7 @@ void LCD_Proc(void);    // 屏幕显示处理
 void Lock_Proc(void);   // 门锁控制处理
 
 /* 中断服务函数 */
-// void USART2_IRQHandler(void);  // RFID串口接收中断（暂注释）
+void USART2_IRQHandler(void);  // RFID串口接收中断
 
 /*==================== 变量定义 ====================*/
 /* 系统变量 */
@@ -66,12 +66,11 @@ u8 mode = 0;
 // 3 - 录入卡片，未验证管理员权限
 // 4 - 录入卡片，已验证管理员权限
 
-/* RFID相关（暂注释）
+/* RFID相关 */
 u8 rfid_index = 0;                          // RFID接收索引
 u8 rfid_temp[4] = {0};                      // 临时卡号存储
 u8 rfid[4][4] = {0};                        // 已录入的卡片存储（最多4张）
 u8 rfid_password_index = 0;                 // 已录入卡片数量
-*/
 
 /*==================== 任务调度器 ====================*/
 typedef struct
@@ -149,14 +148,14 @@ void KEY_Proc(void)
             }
             break;
 
-        // case 12:  // 进入录入卡片模式（暂注释，需RFID模块）
-        //     if(mode == 0)
-        //     {
-        //         mode = 3;
-        //         Audio_Play(13);  // "录入卡片，请输入管理员密码"
-        //         Key_Clear();
-        //     }
-        //     break;
+        case 12:  // 进入录入卡片模式
+            if(mode == 0)
+            {
+                mode = 3;
+                Audio_Play(13);  // "录入卡片，请输入管理员密码"
+                Key_Clear();
+            }
+            break;
 
         case 13:  // 清除键
             Key_Clear();
@@ -228,7 +227,7 @@ void KEY_Proc(void)
                     Key_Clear();
                     break;
 
-                /* 录入卡片模式 - 验证管理员密码（暂注释）
+                /* 录入卡片模式 - 验证管理员密码 */
                 case 3:
                     if(String_Check(key_temp, password_cmd, 6))
                     {
@@ -239,6 +238,7 @@ void KEY_Proc(void)
                     else
                     {
                         Audio_Play(9);      // "管理员密码错误"
+                        Key_Clear();
                         if(++password_error >= 3)
                         {
                             Audio_Play(10);
@@ -246,7 +246,6 @@ void KEY_Proc(void)
                         }
                     }
                     break;
-                */
             }
             break;
     }
@@ -341,7 +340,7 @@ void Key_Clear(void)
     key_index = 0;
 }
 
-/* RFID_Check函数暂注释
+/* RFID_Check函数 - 检查卡片是否已录入 */
 u8 RFID_Check(void)
 {
     u8 i;
@@ -352,16 +351,15 @@ u8 RFID_Check(void)
     }
     return 0;
 }
-*/
 
-/*==================== USART2中断 - RFID接收（暂注释）====================
+/*==================== USART2中断 - RFID接收 ====================*/
 void USART2_IRQHandler(void)
 {
     u8 temp;
     if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET)
     {
         temp = USART_ReceiveData(USART2);
-
+        
         switch(rfid_index)
         {
             case 0:
@@ -438,7 +436,7 @@ void USART2_IRQHandler(void)
     }
     USART_ClearITPendingBit(USART2, USART_IT_RXNE);
 }
-*/
+
 
 /*==================== 主函数 ====================*/
 int main(void)
@@ -448,7 +446,7 @@ int main(void)
     /* 系统初始化 */
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);  // 中断优先级分组
     delay_init(168);                                 // 延时初始化
-
+    
     /* 硬件初始化 */
     TIM2_PWM_Init();     // 舵机PWM初始化
     Lock(1);             // 初始状态：上锁
@@ -483,9 +481,9 @@ int main(void)
     KEY_Init();          // 矩阵按键初始化
     TIM3_Init(1000 - 1, 84 - 1);  // TIM3初始化，1ms中断
 	Audio_Init();        // 语音模块初始化（内部已包含唤醒和延时）
-    Audio_Play(2);       // 播放"门已上锁"提示
+    //Audio_Play(2);       // 播放"门已上锁"提示
     Scheduler_Init();    // 任务调度器初始化
-    // USART2_Init();    // RFID串口初始化（暂注释）
+    USART2_Init();    // RFID串口初始化
 
     /* 主循环 */
     while(1)
